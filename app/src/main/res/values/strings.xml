@@ -12,6 +12,7 @@
     <string name="widget_title">Today\'s Market</string>
     <string name="network_toast">Uh-oh! This app requires an internet connection</string>
     <string name="stock_already_saved_toast">This stock is already saved!</string>
+    <string name="last_updated">Last Updated: %s</string>
 
     <string name="no_data_to_display">No data to display</string>
 </resources>

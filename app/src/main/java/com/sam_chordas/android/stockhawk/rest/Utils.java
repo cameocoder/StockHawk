@@ -18,6 +18,7 @@ import java.util.ArrayList;
  */
 public class Utils {
 
+    public static final String LAST_UPDATED_TIME = "LAST_UPDATED_TIME";
     private static String LOG_TAG = Utils.class.getSimpleName();
 
     private static String NULL_STRING = "null";

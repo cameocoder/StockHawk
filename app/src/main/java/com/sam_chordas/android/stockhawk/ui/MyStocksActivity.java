@@ -5,16 +5,19 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
+import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +40,8 @@ import com.sam_chordas.android.stockhawk.service.StockIntentService;
 import com.sam_chordas.android.stockhawk.service.StockTaskService;
 import com.sam_chordas.android.stockhawk.touch_helper.SimpleItemTouchHelperCallback;
 
+import java.util.Date;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -54,6 +59,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     RecyclerView stockList;
     @Bind(R.id.empty_view)
     TextView emptyView;
+    @Bind(R.id.last_updated)
+    TextView lastUpdated;
     @Bind(R.id.fab)
     FloatingActionButton fab;
 
@@ -123,6 +130,18 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
             // are updated.
             GcmNetworkManager.getInstance(this).schedule(periodicTask);
         }
+
+        updateLastUpdated();
+    }
+
+    private void updateLastUpdated() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Date lastUpdatedDate = new Date(prefs.getLong(Utils.LAST_UPDATED_TIME, 0));
+        if (lastUpdatedDate.getTime() > 0) {
+            String lastUpdatedString = DateUtils.formatDateTime(this, lastUpdatedDate.getTime(),
+                    DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_ALL);
+            lastUpdated.setText(String.format(getString(R.string.last_updated), lastUpdatedString));
+        }
     }
 
 
@@ -186,6 +205,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mCursorAdapter.swapCursor(data);
         showEmptyView(data.getCount() == 0);
+        updateLastUpdated();
     }
 
     @Override
