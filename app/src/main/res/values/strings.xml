@@ -15,4 +15,6 @@
     <string name="last_updated">Last Updated: %s</string>
 
     <string name="no_data_to_display">No data to display</string>
+    <string name="symbol_detail">Symbol Detail</string>
+    <string name="desc_add_symbol_fab">Add symbol</string>
 </resources>

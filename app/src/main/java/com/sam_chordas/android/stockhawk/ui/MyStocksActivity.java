@@ -75,7 +75,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mServiceIntent = new Intent(this, StockIntentService.class);
         if (savedInstanceState == null) {
             // Run the initialize task service so that some stocks appear upon an empty database
-            mServiceIntent.putExtra("tag", "init");
+            mServiceIntent.putExtra(StockTaskService.TAG, StockTaskService.INIT);
             if (isConnected()) {
                 startService(mServiceIntent);
             } else {
@@ -91,8 +91,14 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 new RecyclerViewItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View v, int position) {
-                        //TODO:
-                        // do something on item click
+                        Cursor cursor = mCursorAdapter.getCursor();
+                        cursor.moveToPosition(position);
+                        String symbol = cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL));
+                        final Bundle arguments = new Bundle();
+                        arguments.putString(SymbolDetailFragment.ARG_SYMBOL, symbol);
+                        Intent intent = new Intent(getApplicationContext(), SymbolDetailActivity.class);
+                        intent.putExtras(arguments);
+                        startActivity(intent);
                     }
                 }));
         stockList.setAdapter(mCursorAdapter);
@@ -114,7 +120,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         if (isConnected()) {
             long period = 3600L;
             long flex = 10L;
-            String periodicTag = "periodic";
+            String periodicTag = StockTaskService.PERIODIC;
 
             // create a periodic task to pull stocks once every hour after the app has been opened. This
             // is so Widget data stays up to date.
@@ -223,20 +229,16 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                         public void onInput(MaterialDialog dialog, CharSequence input) {
                             // On FAB click, receive user input. Make sure the stock doesn't already exist
                             // in the DB and proceed accordingly
-                            Cursor c = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
-                                    new String[]{QuoteColumns.SYMBOL}, QuoteColumns.SYMBOL + "= ?",
-                                    new String[]{input.toString()}, null);
-                            if (c.getCount() != 0) {
+                            if (symbolExists(input)) {
                                 Toast toast =
                                         Toast.makeText(MyStocksActivity.this, getString(R.string.stock_already_saved_toast),
                                                 Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
                                 toast.show();
-                                return;
                             } else {
                                 // Add the stock to DB
-                                mServiceIntent.putExtra("tag", "add");
-                                mServiceIntent.putExtra("symbol", input.toString());
+                                mServiceIntent.putExtra(StockTaskService.TAG, StockTaskService.ADD);
+                                mServiceIntent.putExtra(StockTaskService.SYMBOL, input.toString());
                                 startService(mServiceIntent);
                             }
                         }
@@ -245,6 +247,20 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         } else {
             networkToast();
         }
+    }
+
+    private boolean symbolExists(CharSequence input) {
+        Cursor c = null;
+        try {
+            c = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
+                    new String[]{QuoteColumns.SYMBOL}, QuoteColumns.SYMBOL + "= ?",
+                    new String[]{input.toString()}, null);
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        return (c != null) && (c.getCount() != 0);
     }
 
     private void showEmptyView(boolean isVisible) {

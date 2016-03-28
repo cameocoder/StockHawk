@@ -28,7 +28,14 @@ import java.net.URLEncoder;
  * and is used for the initialization and adding task as well.
  */
 public class StockTaskService extends GcmTaskService {
-    private String LOG_TAG = StockTaskService.class.getSimpleName();
+    static final private String LOG_TAG = StockTaskService.class.getSimpleName();
+
+    public static final String TAG = "TAG";
+    public static final String INIT = "INIT";
+    public static final String PERIODIC = "PERIODIC";
+    public static final String ADD = "ADD";
+    public static final String SYMBOL = "SYMBOL";
+    public static final String HISTORICAL_DATA = "HISTORICAL_DATA";
 
     private OkHttpClient client = new OkHttpClient();
     private Context mContext;
@@ -66,7 +73,8 @@ public class StockTaskService extends GcmTaskService {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        if (params.getTag().equals("init") || params.getTag().equals("periodic")) {
+
+        if (params.getTag().equals(INIT) || params.getTag().equals(PERIODIC)) {
             isUpdate = true;
             initQueryCursor = mContext.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
                     new String[]{"Distinct " + QuoteColumns.SYMBOL}, null,
@@ -94,10 +102,10 @@ public class StockTaskService extends GcmTaskService {
                     e.printStackTrace();
                 }
             }
-        } else if (params.getTag().equals("add")) {
+        } else if (params.getTag().equals(ADD)) {
             isUpdate = false;
             // get symbol from params.getExtra and build query
-            String stockInput = params.getExtras().getString("symbol");
+            String stockInput = params.getExtras().getString(SYMBOL);
             try {
                 urlStringBuilder.append(URLEncoder.encode("\"" + stockInput + "\")", "UTF-8"));
             } catch (UnsupportedEncodingException e) {
