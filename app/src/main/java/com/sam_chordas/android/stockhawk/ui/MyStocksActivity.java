@@ -45,6 +45,11 @@ import java.util.Date;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.sam_chordas.android.stockhawk.service.StockTaskService.ADD;
+import static com.sam_chordas.android.stockhawk.service.StockTaskService.INIT;
+import static com.sam_chordas.android.stockhawk.service.StockTaskService.PERIODIC;
+import static com.sam_chordas.android.stockhawk.service.StockTaskService.SYMBOL;
+
 public class MyStocksActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
@@ -75,7 +80,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mServiceIntent = new Intent(this, StockIntentService.class);
         if (savedInstanceState == null) {
             // Run the initialize task service so that some stocks appear upon an empty database
-            mServiceIntent.putExtra(StockTaskService.TAG, StockTaskService.INIT);
+            mServiceIntent.putExtra(StockTaskService.TAG, INIT);
             if (isConnected()) {
                 startService(mServiceIntent);
             } else {
@@ -120,7 +125,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         if (isConnected()) {
             long period = 3600L;
             long flex = 10L;
-            String periodicTag = StockTaskService.PERIODIC;
+            String periodicTag = PERIODIC;
 
             // create a periodic task to pull stocks once every hour after the app has been opened. This
             // is so Widget data stays up to date.
@@ -237,8 +242,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                                 toast.show();
                             } else {
                                 // Add the stock to DB
-                                mServiceIntent.putExtra(StockTaskService.TAG, StockTaskService.ADD);
-                                mServiceIntent.putExtra(StockTaskService.SYMBOL, input.toString());
+                                mServiceIntent.putExtra(StockTaskService.TAG, ADD);
+                                mServiceIntent.putExtra(SYMBOL, input.toString());
                                 startService(mServiceIntent);
                             }
                         }

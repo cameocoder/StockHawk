@@ -31,7 +31,7 @@ public class Utils {
         Log.i(LOG_TAG, "GET FB: " + JSON);
         try {
             jsonObject = new JSONObject(JSON);
-            if (jsonObject != null && jsonObject.length() != 0) {
+            if (jsonObject.length() != 0) {
                 jsonObject = jsonObject.getJSONObject("query");
                 int count = Integer.parseInt(jsonObject.getString("count"));
                 if (count == 1) {

@@ -5,4 +5,7 @@
     <color name="ripple">@color/material_blue_700</color>
     <color name="material_red_700">#D50000</color>
     <color name="material_green_700">#00C853</color>
+    <color name="chart_line">#007C33</color>
+    <color name="chart_fill">@color/material_green_700</color>
+    <color name="chart_bg">@android:color/white</color>
 </resources>

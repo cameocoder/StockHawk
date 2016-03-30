@@ -13,6 +13,11 @@ import com.sam_chordas.android.stockhawk.rest.Utils;
 
 import java.util.Date;
 
+import static com.sam_chordas.android.stockhawk.service.StockTaskService.ADD;
+import static com.sam_chordas.android.stockhawk.service.StockTaskService.HISTORICAL_DATA;
+import static com.sam_chordas.android.stockhawk.service.StockTaskService.SYMBOL;
+import static com.sam_chordas.android.stockhawk.service.StockTaskService.TAG;
+
 /**
  * Created by sam_chordas on 10/1/15.
  */
@@ -31,13 +36,14 @@ public class StockIntentService extends IntentService {
         Log.d(StockIntentService.class.getSimpleName(), "Stock Intent Service");
         StockTaskService stockTaskService = new StockTaskService(this);
         Bundle args = new Bundle();
-        if (intent.getStringExtra(StockTaskService.TAG).equals(StockTaskService.ADD)) {
-            args.putString(StockTaskService.SYMBOL, intent.getStringExtra(StockTaskService.SYMBOL));
+        if (intent.getStringExtra(TAG).equals(ADD)
+                || intent.getStringExtra(TAG).equals(HISTORICAL_DATA)) {
+            args.putString(SYMBOL, intent.getStringExtra(SYMBOL));
         }
-
+        
         // We can call OnRunTask from the intent service to force it to run immediately instead of
         // scheduling a task.
-        int rc = stockTaskService.onRunTask(new TaskParams(intent.getStringExtra(StockTaskService.TAG), args));
+        int rc = stockTaskService.onRunTask(new TaskParams(intent.getStringExtra(TAG), args));
         if (rc == GcmNetworkManager.RESULT_SUCCESS) {
             lastUpdated();
         }
