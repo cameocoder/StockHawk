@@ -1,6 +1,8 @@
 package com.sam_chordas.android.stockhawk.ui;
 
 import android.app.LoaderManager;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -39,6 +41,7 @@ import com.sam_chordas.android.stockhawk.rest.Utils;
 import com.sam_chordas.android.stockhawk.service.StockIntentService;
 import com.sam_chordas.android.stockhawk.service.StockTaskService;
 import com.sam_chordas.android.stockhawk.touch_helper.SimpleItemTouchHelperCallback;
+import com.sam_chordas.android.stockhawk.widget.QuoteWidgetProvider;
 
 import java.util.Date;
 
@@ -147,7 +150,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
 
     private void updateLastUpdated() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Date lastUpdatedDate = new Date(prefs.getLong(Utils.LAST_UPDATED_TIME, 0));
+        Date lastUpdatedDate = new Date(prefs.getLong(Utils.PREF_LAST_UPDATED_TIME, 0));
         if (lastUpdatedDate.getTime() > 0) {
             String lastUpdatedString = DateUtils.formatDateTime(this, lastUpdatedDate.getTime(),
                     DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_ALL);
@@ -194,7 +197,13 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
 
         if (id == R.id.action_change_units) {
             // this is for changing stock changes from percent value to dollar value
-            Utils.showPercent = !Utils.showPercent;
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean(Utils.PREF_SHOW_PERCENT, !prefs.getBoolean(Utils.PREF_SHOW_PERCENT, true));
+            editor.apply();
+
+            notifyAppWidgetViewDataChanged();
+
             this.getContentResolver().notifyChange(QuoteProvider.Quotes.CONTENT_URI, null);
         }
 
@@ -282,4 +291,13 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
+
+
+    private void notifyAppWidgetViewDataChanged() {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
+                new ComponentName(this, QuoteWidgetProvider.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
+    }
+
 }

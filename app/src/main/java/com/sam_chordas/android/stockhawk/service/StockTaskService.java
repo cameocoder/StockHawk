@@ -14,7 +14,7 @@ import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
-import com.sam_chordas.android.stockhawk.rest.Quote;
+import com.sam_chordas.android.stockhawk.rest.QuoteHistoryResult;
 import com.sam_chordas.android.stockhawk.rest.Utils;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -106,7 +106,7 @@ public class StockTaskService extends GcmTaskService {
 
         String getResponse;
         int result = GcmNetworkManager.RESULT_FAILURE;
-        ArrayList<Quote> quotes = null;
+        ArrayList<QuoteHistoryResult> quotes = null;
 
         String urlString = urlStringBuilder.toString();
         try {
@@ -122,8 +122,8 @@ public class StockTaskService extends GcmTaskService {
         return result;
     }
 
-    private ArrayList<Quote> processHistoryResponse(String response) {
-        ArrayList<Quote> quotes = new ArrayList<>();;
+    private ArrayList<QuoteHistoryResult> processHistoryResponse(String response) {
+        ArrayList<QuoteHistoryResult> quotes = new ArrayList<>();;
         try {
             JSONObject jsonObject = new JSONObject(response);
             if (jsonObject.length() != 0) {
@@ -137,7 +137,7 @@ public class StockTaskService extends GcmTaskService {
                             String date = jsonObject.getString("Date");
                             float open = Float.parseFloat(Utils.truncateBidPrice(jsonObject.getString("Open")));
                             float close = Float.parseFloat(Utils.truncateBidPrice(jsonObject.getString("Close")));
-                            Quote quote = new Quote();
+                            QuoteHistoryResult quote = new QuoteHistoryResult();
                             quote.setDate(date);
                             quote.setOpen(open);
                             quote.setClose(close);
@@ -251,7 +251,7 @@ public class StockTaskService extends GcmTaskService {
     public static final String QUOTE_HISTORY_VALUES = "quote_history_values";
     public static final String QUOTE_HISTORY_RESULT = "quote_history_result";
 
-    private void broadcastHistoryResponse(ArrayList<Quote> quotes, int result) {
+    private void broadcastHistoryResponse(ArrayList<QuoteHistoryResult> quotes, int result) {
         Intent intent = new Intent(QUOTE_HISTORY_INTENT);
         intent.putExtra(QUOTE_HISTORY_RESULT, result);
         if (result == GcmNetworkManager.RESULT_SUCCESS) {

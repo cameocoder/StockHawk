@@ -17,4 +17,7 @@
     <string name="no_data_to_display">No data to display</string>
     <string name="symbol_detail">Symbol Detail</string>
     <string name="desc_add_symbol_fab">Add symbol</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
 </resources>

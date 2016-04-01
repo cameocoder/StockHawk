@@ -1,10 +1,12 @@
 package com.sam_chordas.android.stockhawk.rest;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,8 +46,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
         robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_quote, parent, false);
-        ViewHolder vh = new ViewHolder(itemView);
-        return vh;
+        return new ViewHolder(itemView);
     }
 
     @Override
@@ -70,7 +71,10 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
                         mContext.getResources().getDrawable(R.drawable.percent_change_pill_red));
             }
         }
-        if (Utils.showPercent) {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+
+        if (prefs.getBoolean(Utils.PREF_SHOW_PERCENT, true)) {
             viewHolder.change.setText(cursor.getString(cursor.getColumnIndex("percent_change")));
         } else {
             viewHolder.change.setText(cursor.getString(cursor.getColumnIndex("change")));
@@ -108,7 +112,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
 
         @Override
         public void onItemSelected() {
-            itemView.setBackgroundColor(Color.LTGRAY);
+            itemView.setBackgroundColor(Color.DKGRAY);
         }
 
         @Override

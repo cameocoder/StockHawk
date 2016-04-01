@@ -4,39 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/last_updated"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal|top"
-        tools:text="@string/last_updated"
-        android:textStyle="italic"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/stock_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/list_item_quote"/>
-
-    <TextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/no_data_to_display"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:visibility="gone" />
+    <include layout="@layout/symbol_list" />
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fab"
-        android:contentDescription="@string/desc_add_symbol_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_margin="16dp"
+        android:contentDescription="@string/desc_add_symbol_fab"
         android:src="@drawable/ic_add_white_24dp"
         fab:fab_colorNormal="@color/material_blue_500"
         fab:fab_colorPressed="@color/material_blue_700"

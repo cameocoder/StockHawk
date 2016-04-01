@@ -18,11 +18,11 @@ import java.util.ArrayList;
  */
 public class Utils {
 
-    public static final String LAST_UPDATED_TIME = "LAST_UPDATED_TIME";
+    public static final String PREF_LAST_UPDATED_TIME = "PREF_LAST_UPDATED_TIME";
+    public static final String PREF_SHOW_PERCENT = "PREF_SHOW_PERCENT";
     private static String LOG_TAG = Utils.class.getSimpleName();
 
     private static String NULL_STRING = "null";
-    public static boolean showPercent = true;
 
     public static ArrayList quoteJsonToContentVals(String JSON) {
         ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>();

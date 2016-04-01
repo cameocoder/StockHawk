@@ -53,7 +53,7 @@ public class StockIntentService extends IntentService {
         Date date = new Date();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong(Utils.LAST_UPDATED_TIME, date.getTime());
+        editor.putLong(Utils.PREF_LAST_UPDATED_TIME, date.getTime());
         editor.apply();
     }
 }

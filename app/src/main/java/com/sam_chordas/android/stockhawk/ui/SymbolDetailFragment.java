@@ -18,7 +18,7 @@ import com.db.chart.model.Point;
 import com.db.chart.view.LineChartView;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.sam_chordas.android.stockhawk.R;
-import com.sam_chordas.android.stockhawk.rest.Quote;
+import com.sam_chordas.android.stockhawk.rest.QuoteHistoryResult;
 import com.sam_chordas.android.stockhawk.service.StockIntentService;
 import com.sam_chordas.android.stockhawk.service.StockTaskService;
 
@@ -49,7 +49,7 @@ public class SymbolDetailFragment extends Fragment {
     @Bind(R.id.linechart)
     LineChartView lineChart;
 
-    private ArrayList<Quote> quotes;
+    private ArrayList<QuoteHistoryResult> quotes;
 
     private BroadcastReceiver historyReceiver = new BroadcastReceiver() {
         @Override
@@ -143,7 +143,7 @@ public class SymbolDetailFragment extends Fragment {
 
         float minValue = quotes.get(0).getClose();
         float maxValue = 0;
-        for (Quote quote : quotes) {
+        for (QuoteHistoryResult quote : quotes) {
             float close = quote.getClose();
             dataset.addPoint(new Point(quote.getDate(), close));
             if (close > maxValue) {

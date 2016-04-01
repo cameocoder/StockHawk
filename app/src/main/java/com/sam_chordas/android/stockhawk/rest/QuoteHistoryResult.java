@@ -3,7 +3,7 @@ package com.sam_chordas.android.stockhawk.rest;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Quote implements Parcelable {
+public class QuoteHistoryResult implements Parcelable {
 
     private String Symbol;
     private String Date;
@@ -17,7 +17,7 @@ public class Quote implements Parcelable {
     /**
      * No args constructor for use in serialization
      */
-    public Quote() {
+    public QuoteHistoryResult() {
     }
 
     /**
@@ -150,16 +150,16 @@ public class Quote implements Parcelable {
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Quote createFromParcel(Parcel in) {
-            return new Quote(in);
+        public QuoteHistoryResult createFromParcel(Parcel in) {
+            return new QuoteHistoryResult(in);
         }
 
-        public Quote[] newArray(int size) {
-            return new Quote[size];
+        public QuoteHistoryResult[] newArray(int size) {
+            return new QuoteHistoryResult[size];
         }
     };
 
-    private Quote(Parcel in) {
+    private QuoteHistoryResult(Parcel in) {
         Symbol = in.readString();
         Date = in.readString();
         Open = in.readFloat();
