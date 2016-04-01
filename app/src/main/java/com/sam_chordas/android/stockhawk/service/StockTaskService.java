@@ -53,14 +53,14 @@ public class StockTaskService extends GcmTaskService {
     private static final String YQL_HISTORY_QUERY = "select * from yahoo.finance.historicaldata where symbol = \"%s\" and startDate = \"%s\" and endDate = \"%s\"";
     private static final String YQL_OPTIONS = "&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
     private OkHttpClient client = new OkHttpClient();
-    private Context mContext;
+    private Context context;
     private boolean isUpdate;
 
     public StockTaskService() {
     }
 
     public StockTaskService(Context context) {
-        mContext = context;
+        this.context = context;
     }
 
     String fetchData(String url) throws IOException {
@@ -74,14 +74,15 @@ public class StockTaskService extends GcmTaskService {
 
     @Override
     public int onRunTask(TaskParams params) {
-        if (mContext == null) {
-            mContext = this;
+        if (context == null) {
+            context = this;
         }
         int result;
         if (params.getTag().equals(HISTORICAL_DATA)) {
             result = handleHistoryQuery(params);
         } else {
             result = handleQuoteQuery(params);
+            Utils.notifyAppWidgetViewDataChanged(context);
         }
 
         return result;
@@ -175,7 +176,7 @@ public class StockTaskService extends GcmTaskService {
 
         if (params.getTag().equals(INIT) || params.getTag().equals(PERIODIC)) {
             isUpdate = true;
-            initQueryCursor = mContext.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
+            initQueryCursor = context.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
                     new String[]{"Distinct " + QuoteColumns.SYMBOL}, null,
                     null, null);
             if (initQueryCursor == null || initQueryCursor.getCount() == 0) {
@@ -232,10 +233,10 @@ public class StockTaskService extends GcmTaskService {
                     // update ISCURRENT to 0 (false) so new data is current
                     if (isUpdate) {
                         contentValues.put(QuoteColumns.ISCURRENT, 0);
-                        mContext.getContentResolver().update(QuoteProvider.Quotes.CONTENT_URI, contentValues,
+                        context.getContentResolver().update(QuoteProvider.Quotes.CONTENT_URI, contentValues,
                                 null, null);
                     }
-                    mContext.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
+                    context.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
                             Utils.quoteJsonToContentVals(getResponse));
                 } catch (RemoteException | OperationApplicationException e) {
                     Log.e(LOG_TAG, "Error applying batch insert", e);
@@ -257,7 +258,7 @@ public class StockTaskService extends GcmTaskService {
         if (result == GcmNetworkManager.RESULT_SUCCESS) {
             intent.putParcelableArrayListExtra(QUOTE_HISTORY_VALUES, quotes);
         }
-        mContext.sendBroadcast(intent);
+        context.sendBroadcast(intent);
     }
 
 
