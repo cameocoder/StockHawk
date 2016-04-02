@@ -25,11 +25,11 @@ import java.util.List;
 
 public class QuoteWidgetRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    private static String LOG_TAG = QuoteWidgetRemoteViewsFactory.class.getSimpleName();
+    private static final String LOG_TAG = QuoteWidgetRemoteViewsFactory.class.getSimpleName();
 
     private final Context context;
     private List<QuoteQueryResult> stocks = new ArrayList<>();
-    SharedPreferences prefs;
+    private SharedPreferences prefs;
 
     public QuoteWidgetRemoteViewsFactory(Context context) {
         this.context = context;
@@ -65,7 +65,6 @@ public class QuoteWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
         view.setTextViewText(R.id.stock_symbol, quote.getSymbol());
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        Log.d(LOG_TAG, "Utils.PREF_SHOW_PERCENT: " + prefs.getBoolean(Utils.PREF_SHOW_PERCENT, true));
         if (prefs.getBoolean(Utils.PREF_SHOW_PERCENT, true)) {
             view.setTextViewText(R.id.change, quote.getPercentChange());
         } else {
@@ -140,7 +139,7 @@ public class QuoteWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
                         quote.setPercentChange(percentChange);
                         quote.setIsUp(isup);
                         stocks.add(quote);
-                        Log.d(LOG_TAG, "Added symbol: " + symbol + " change: " + change);
+//                        Log.d(LOG_TAG, "Added symbol: " + symbol + " change: " + change);
                     }
                 }
             }

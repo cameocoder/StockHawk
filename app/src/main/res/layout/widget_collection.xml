@@ -33,6 +33,13 @@
             android:divider="@null"
             android:dividerHeight="0dp"
             tools:listitem="@layout/widget_collection_item" />
+        <TextView
+            android:id="@+id/widget_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:text="@string/no_data_to_display"/>
     </FrameLayout>
 
 </LinearLayout>

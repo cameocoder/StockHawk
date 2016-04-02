@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAdapter.ViewHolder>
         implements ItemTouchHelperAdapter {
 
-    private static Context context;
+    private Context context;
     private static Typeface robotoLight;
     //private final OnStartDragListener mDragListener;
     private boolean isPercent;
@@ -89,11 +89,6 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
         context.getContentResolver().delete(QuoteProvider.Quotes.withSymbol(symbol), null, null);
         notifyItemRemoved(position);
         Utils.notifyAppWidgetViewDataChanged(context);
-    }
-
-    @Override
-    public int getItemCount() {
-        return super.getItemCount();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder

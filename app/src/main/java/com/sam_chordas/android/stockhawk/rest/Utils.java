@@ -25,26 +25,31 @@ public class Utils {
 
     public static final String PREF_LAST_UPDATED_TIME = "PREF_LAST_UPDATED_TIME";
     public static final String PREF_SHOW_PERCENT = "PREF_SHOW_PERCENT";
-    private static String LOG_TAG = Utils.class.getSimpleName();
+    private static final String LOG_TAG = Utils.class.getSimpleName();
 
-    private static String NULL_STRING = "null";
+    private static final String JSON_NULL = "null";
+    private static final String JSON_QUERY = "query";
+    private static final String JSON_COUNT = "count";
+    private static final String JSON_RESULTS = "results";
+    private static final String JSON_QUOTE = "quote";
 
     public static ArrayList quoteJsonToContentVals(String JSON) {
         ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>();
-        JSONObject jsonObject = null;
-        JSONArray resultsArray = null;
+        JSONObject jsonObject;
+        JSONArray resultsArray;
         Log.i(LOG_TAG, "GET FB: " + JSON);
         try {
             jsonObject = new JSONObject(JSON);
             if (jsonObject.length() != 0) {
-                jsonObject = jsonObject.getJSONObject("query");
-                int count = Integer.parseInt(jsonObject.getString("count"));
+
+                jsonObject = jsonObject.getJSONObject(JSON_QUERY);
+                int count = Integer.parseInt(jsonObject.getString(JSON_COUNT));
                 if (count == 1) {
-                    jsonObject = jsonObject.getJSONObject("results")
-                            .getJSONObject("quote");
+                    jsonObject = jsonObject.getJSONObject(JSON_RESULTS)
+                            .getJSONObject(JSON_QUOTE);
                     batchOperations.add(buildBatchOperation(jsonObject));
                 } else {
-                    resultsArray = jsonObject.getJSONObject("results").getJSONArray("quote");
+                    resultsArray = jsonObject.getJSONObject(JSON_RESULTS).getJSONArray(JSON_QUOTE);
 
                     if (resultsArray != null && resultsArray.length() != 0) {
                         for (int i = 0; i < resultsArray.length(); i++) {
@@ -61,14 +66,14 @@ public class Utils {
     }
 
     public static String truncateBidPrice(String bidPrice) {
-        if (!TextUtils.isEmpty(bidPrice) && !NULL_STRING.equals(bidPrice)) {
+        if (!TextUtils.isEmpty(bidPrice) && !JSON_NULL.equals(bidPrice)) {
             bidPrice = String.format("%.2f", Float.parseFloat(bidPrice));
         }
         return bidPrice;
     }
 
-    public static String truncateChange(String change, boolean isPercentChange) {
-        if (TextUtils.isEmpty(change) || NULL_STRING.equals(change)) {
+    private static String truncateChange(String change, boolean isPercentChange) {
+        if (TextUtils.isEmpty(change) || JSON_NULL.equals(change)) {
             return change;
         }
         String weight = change.substring(0, 1);
@@ -87,7 +92,7 @@ public class Utils {
         return change;
     }
 
-    public static ContentProviderOperation buildBatchOperation(JSONObject jsonObject) {
+    private static ContentProviderOperation buildBatchOperation(JSONObject jsonObject) {
         ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(
                 QuoteProvider.Quotes.CONTENT_URI);
         try {

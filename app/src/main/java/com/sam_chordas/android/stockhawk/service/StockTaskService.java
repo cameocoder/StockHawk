@@ -33,6 +33,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.sam_chordas.android.stockhawk.rest.Utils.notifyAppWidgetViewDataChanged;
+
 /**
  * Created by sam_chordas on 9/30/15.
  * The GCMTask service is primarily for periodic tasks. However, OnRunTask can be called directly
@@ -63,7 +65,7 @@ public class StockTaskService extends GcmTaskService {
         this.context = context;
     }
 
-    String fetchData(String url) throws IOException {
+    private String fetchData(String url) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -82,7 +84,7 @@ public class StockTaskService extends GcmTaskService {
             result = handleHistoryQuery(params);
         } else {
             result = handleQuoteQuery(params);
-            Utils.notifyAppWidgetViewDataChanged(context);
+            notifyAppWidgetViewDataChanged(context);
         }
 
         return result;
@@ -111,9 +113,9 @@ public class StockTaskService extends GcmTaskService {
 
         String urlString = urlStringBuilder.toString();
         try {
-            Log.d(LOG_TAG,"Query: " + urlString);
+            Log.d(LOG_TAG, "Query: " + urlString);
             getResponse = fetchData(urlString);
-            Log.d(LOG_TAG,"Response: " + getResponse);
+            Log.d(LOG_TAG, "Response: " + getResponse);
             quotes = processHistoryResponse(getResponse);
             result = GcmNetworkManager.RESULT_SUCCESS;
         } catch (IOException e) {
@@ -124,7 +126,8 @@ public class StockTaskService extends GcmTaskService {
     }
 
     private ArrayList<QuoteHistoryResult> processHistoryResponse(String response) {
-        ArrayList<QuoteHistoryResult> quotes = new ArrayList<>();;
+        ArrayList<QuoteHistoryResult> quotes = new ArrayList<>();
+
         try {
             JSONObject jsonObject = new JSONObject(response);
             if (jsonObject.length() != 0) {
@@ -182,7 +185,7 @@ public class StockTaskService extends GcmTaskService {
             if (initQueryCursor == null || initQueryCursor.getCount() == 0) {
                 // Init task. Populates DB with quotes for the symbols seen below
                 try {
-                    String initialSymbolsQuery = String.format(YQL_QUOTE_QUERY, "\"YHOO\",\"AAPL\",\"GOOG\",\"TSLA\")");
+                    String initialSymbolsQuery = String.format(YQL_QUOTE_QUERY, "\"YHOO\",\"AAPL\",\"GOOG\",\"TSLA\"");
                     urlStringBuilder.append(
                             URLEncoder.encode(initialSymbolsQuery, "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
@@ -193,8 +196,7 @@ public class StockTaskService extends GcmTaskService {
                 initQueryCursor.moveToFirst();
                 StringBuilder mStoredSymbols = new StringBuilder();
                 for (int i = 0; i < initQueryCursor.getCount(); i++) {
-                    mStoredSymbols.append("\"" +
-                            initQueryCursor.getString(initQueryCursor.getColumnIndex("symbol")) + "\",");
+                    mStoredSymbols.append("\"").append(initQueryCursor.getString(initQueryCursor.getColumnIndex("symbol"))).append("\",");
                     initQueryCursor.moveToNext();
                 }
                 mStoredSymbols.replace(mStoredSymbols.length() - 1, mStoredSymbols.length(), "");
@@ -219,31 +221,30 @@ public class StockTaskService extends GcmTaskService {
         // finalize the URL for the API query.
         urlStringBuilder.append(YQL_OPTIONS);
 
-        String urlString;
         String getResponse;
         int result = GcmNetworkManager.RESULT_FAILURE;
+        String urlString = urlStringBuilder.toString();
 
-        if (urlStringBuilder != null) {
-            urlString = urlStringBuilder.toString();
+        try {
+            getResponse = fetchData(urlString);
             try {
-                getResponse = fetchData(urlString);
-                result = GcmNetworkManager.RESULT_SUCCESS;
-                try {
-                    ContentValues contentValues = new ContentValues();
-                    // update ISCURRENT to 0 (false) so new data is current
-                    if (isUpdate) {
-                        contentValues.put(QuoteColumns.ISCURRENT, 0);
-                        context.getContentResolver().update(QuoteProvider.Quotes.CONTENT_URI, contentValues,
-                                null, null);
-                    }
-                    context.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
-                            Utils.quoteJsonToContentVals(getResponse));
-                } catch (RemoteException | OperationApplicationException e) {
-                    Log.e(LOG_TAG, "Error applying batch insert", e);
+                ContentValues contentValues = new ContentValues();
+                // update ISCURRENT to 0 (false) so new data is current
+                if (isUpdate) {
+                    contentValues.put(QuoteColumns.ISCURRENT, 0);
+                    context.getContentResolver().update(QuoteProvider.Quotes.CONTENT_URI, contentValues,
+                            null, null);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+                ArrayList contentVals = Utils.quoteJsonToContentVals(getResponse);
+                if (contentVals != null && !contentVals.isEmpty()) {
+                    context.getContentResolver().applyBatch(QuoteProvider.AUTHORITY, contentVals);
+                    result = GcmNetworkManager.RESULT_SUCCESS;
+                }
+            } catch (RemoteException | OperationApplicationException e) {
+                Log.e(LOG_TAG, "Error applying batch insert", e);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return result;
     }

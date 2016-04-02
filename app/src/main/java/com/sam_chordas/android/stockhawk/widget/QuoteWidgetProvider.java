@@ -21,7 +21,7 @@ import com.sam_chordas.android.stockhawk.ui.SymbolDetailFragment;
  */
 public class QuoteWidgetProvider extends AppWidgetProvider {
 
-    public static String ACTION_DETAIL = "com.sam_chordas.android.stockhawk.widget.ACTION_DETAIL";
+    private static final String ACTION_DETAIL = "com.sam_chordas.android.stockhawk.widget.ACTION_DETAIL";
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -48,6 +48,7 @@ public class QuoteWidgetProvider extends AppWidgetProvider {
 
         // Instruct the widget manager to update the widget
         views.setRemoteAdapter(R.id.widget_list, new Intent(context, QuoteWidgetRemoteViewsService.class));
+        views.setEmptyView(R.id.widget_list, R.id.widget_empty);
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
