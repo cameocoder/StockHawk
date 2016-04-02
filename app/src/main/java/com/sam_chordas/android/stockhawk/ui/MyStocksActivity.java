@@ -178,7 +178,20 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.my_stocks, menu);
         restoreActionBar();
+
+        MenuItem actionChangeUnits = menu.findItem(R.id.action_change_units);
+        updateChangeUnitsMenuItem(actionChangeUnits);
         return true;
+    }
+
+    private void updateChangeUnitsMenuItem(MenuItem actionChangeUnits) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean showPercent = prefs.getBoolean(Utils.PREF_SHOW_PERCENT, true);
+        if (showPercent) {
+            actionChangeUnits.setIcon(R.drawable.ic_attach_money_white_24dp);
+        } else {
+            actionChangeUnits.setIcon(R.drawable.ic_percent_white_24dp);
+        }
     }
 
     @Override
@@ -188,17 +201,14 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         if (id == R.id.action_change_units) {
             // this is for changing stock changes from percent value to dollar value
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean(Utils.PREF_SHOW_PERCENT, !prefs.getBoolean(Utils.PREF_SHOW_PERCENT, true));
             editor.apply();
+
+            updateChangeUnitsMenuItem(item);
 
             Utils.notifyAppWidgetViewDataChanged(this);
 
