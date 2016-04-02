@@ -20,7 +20,7 @@ import com.google.android.gms.gcm.GcmNetworkManager;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.rest.QuoteHistoryResult;
 import com.sam_chordas.android.stockhawk.service.StockIntentService;
-import com.sam_chordas.android.stockhawk.service.StockTaskService;
+import com.sam_chordas.android.stockhawk.utils.IntentExtras;
 
 import java.util.ArrayList;
 
@@ -54,10 +54,10 @@ public class SymbolDetailFragment extends Fragment {
     private BroadcastReceiver historyReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equalsIgnoreCase(StockTaskService.QUOTE_HISTORY_INTENT)) {
-                int resultCode = intent.getExtras().getInt(StockTaskService.QUOTE_HISTORY_RESULT);
+            if (intent.getAction().equalsIgnoreCase(IntentExtras.QUOTE_HISTORY_INTENT)) {
+                int resultCode = intent.getExtras().getInt(IntentExtras.QUOTE_HISTORY_RESULT);
                 if (resultCode == GcmNetworkManager.RESULT_SUCCESS) {
-                    quotes = intent.getExtras().getParcelableArrayList(StockTaskService.QUOTE_HISTORY_VALUES);
+                    quotes = intent.getExtras().getParcelableArrayList(IntentExtras.QUOTE_HISTORY_VALUES);
                     processQuotes();
                 }
             }
@@ -86,7 +86,7 @@ public class SymbolDetailFragment extends Fragment {
                 actionBar.setTitle(symbol);
             }
 
-            activity.registerReceiver(historyReceiver, new IntentFilter(StockTaskService.QUOTE_HISTORY_INTENT));
+            activity.registerReceiver(historyReceiver, new IntentFilter(IntentExtras.QUOTE_HISTORY_INTENT));
         }
         if (savedInstanceState == null) {
             if (activity != null) {
@@ -109,7 +109,7 @@ public class SymbolDetailFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(StockTaskService.QUOTE_HISTORY_VALUES, quotes);
+        outState.putParcelableArrayList(IntentExtras.QUOTE_HISTORY_VALUES, quotes);
         super.onSaveInstanceState(outState);
     }
 
@@ -118,8 +118,8 @@ public class SymbolDetailFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(StockTaskService.QUOTE_HISTORY_VALUES)) {
-                quotes = savedInstanceState.getParcelableArrayList(StockTaskService.QUOTE_HISTORY_VALUES);
+            if (savedInstanceState.containsKey(IntentExtras.QUOTE_HISTORY_VALUES)) {
+                quotes = savedInstanceState.getParcelableArrayList(IntentExtras.QUOTE_HISTORY_VALUES);
                 processQuotes();
             }
         }

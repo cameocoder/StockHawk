@@ -6,8 +6,9 @@
     <string name="symbol_search">Symbol Search</string>
     <string name="content_test">Search for a Stock Symbol</string>
     <string name="input_hint">FB</string>
-    <string name="input_prefill"/>
+    <string name="input_prefill" />
     <string name="widget_title">Today\'s Market</string>
+    <string name="appwidget_text" translatable="false">@string/app_name</string>
     <string name="network_toast">Uh-oh! This app requires an internet connection</string>
     <string name="stock_already_saved_toast">This stock is already saved!</string>
     <string name="last_updated">Last Updated: %s</string>
@@ -15,7 +16,6 @@
     <string name="no_data_to_display">No data to display</string>
     <string name="symbol_detail">Symbol Detail</string>
     <string name="desc_add_symbol_fab">Add symbol</string>
-    <string name="appwidget_text">EXAMPLE</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
 </resources>

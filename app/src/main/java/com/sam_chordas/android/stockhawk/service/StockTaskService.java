@@ -16,6 +16,7 @@ import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.rest.QuoteHistoryResult;
 import com.sam_chordas.android.stockhawk.rest.Utils;
+import com.sam_chordas.android.stockhawk.utils.IntentExtras;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -249,15 +250,11 @@ public class StockTaskService extends GcmTaskService {
         return result;
     }
 
-    public static final String QUOTE_HISTORY_INTENT = "quote_history_intent";
-    public static final String QUOTE_HISTORY_VALUES = "quote_history_values";
-    public static final String QUOTE_HISTORY_RESULT = "quote_history_result";
-
     private void broadcastHistoryResponse(ArrayList<QuoteHistoryResult> quotes, int result) {
-        Intent intent = new Intent(QUOTE_HISTORY_INTENT);
-        intent.putExtra(QUOTE_HISTORY_RESULT, result);
+        Intent intent = new Intent(IntentExtras.QUOTE_HISTORY_INTENT);
+        intent.putExtra(IntentExtras.QUOTE_HISTORY_RESULT, result);
         if (result == GcmNetworkManager.RESULT_SUCCESS) {
-            intent.putParcelableArrayListExtra(QUOTE_HISTORY_VALUES, quotes);
+            intent.putParcelableArrayListExtra(IntentExtras.QUOTE_HISTORY_VALUES, quotes);
         }
         context.sendBroadcast(intent);
     }
