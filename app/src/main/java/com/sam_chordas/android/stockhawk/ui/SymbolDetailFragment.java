@@ -20,7 +20,6 @@ import com.google.android.gms.gcm.GcmNetworkManager;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.rest.QuoteHistoryResult;
 import com.sam_chordas.android.stockhawk.service.StockIntentService;
-import com.sam_chordas.android.stockhawk.utils.IntentExtras;
 
 import java.util.ArrayList;
 
@@ -30,19 +29,20 @@ import butterknife.ButterKnife;
 import static com.sam_chordas.android.stockhawk.service.StockTaskService.HISTORICAL_DATA;
 import static com.sam_chordas.android.stockhawk.service.StockTaskService.SYMBOL;
 import static com.sam_chordas.android.stockhawk.service.StockTaskService.TAG;
+import static com.sam_chordas.android.stockhawk.utils.IntentExtras.ARG_SYMBOL;
+import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_HISTORY_INTENT;
+import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_HISTORY_RESULT;
+import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_HISTORY_VALUES;
 
 /**
  * A fragment representing a single Symbol detail screen.
  * This fragment is either contained in a {@link SymbolListActivity}
  * in two-pane mode (on tablets) or a {@link SymbolDetailActivity}
  * on handsets.
+ * This fragment generates a chart by fetching historial data and generating a chart using
+ * LineChartView.  It is ugly.
  */
 public class SymbolDetailFragment extends Fragment {
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    public static final String ARG_SYMBOL = "symbol";
 
     private String symbol;
 
@@ -54,10 +54,10 @@ public class SymbolDetailFragment extends Fragment {
     private BroadcastReceiver historyReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equalsIgnoreCase(IntentExtras.QUOTE_HISTORY_INTENT)) {
-                int resultCode = intent.getExtras().getInt(IntentExtras.QUOTE_HISTORY_RESULT);
+            if (intent.getAction().equalsIgnoreCase(QUOTE_HISTORY_INTENT)) {
+                int resultCode = intent.getExtras().getInt(QUOTE_HISTORY_RESULT);
                 if (resultCode == GcmNetworkManager.RESULT_SUCCESS) {
-                    quotes = intent.getExtras().getParcelableArrayList(IntentExtras.QUOTE_HISTORY_VALUES);
+                    quotes = intent.getExtras().getParcelableArrayList(QUOTE_HISTORY_VALUES);
                     processQuotes();
                 }
             }
@@ -86,7 +86,7 @@ public class SymbolDetailFragment extends Fragment {
                 actionBar.setTitle(symbol);
             }
 
-            activity.registerReceiver(historyReceiver, new IntentFilter(IntentExtras.QUOTE_HISTORY_INTENT));
+            activity.registerReceiver(historyReceiver, new IntentFilter(QUOTE_HISTORY_INTENT));
         }
         if (savedInstanceState == null) {
             if (activity != null) {
@@ -109,7 +109,7 @@ public class SymbolDetailFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(IntentExtras.QUOTE_HISTORY_VALUES, quotes);
+        outState.putParcelableArrayList(QUOTE_HISTORY_VALUES, quotes);
         super.onSaveInstanceState(outState);
     }
 
@@ -118,8 +118,8 @@ public class SymbolDetailFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(IntentExtras.QUOTE_HISTORY_VALUES)) {
-                quotes = savedInstanceState.getParcelableArrayList(IntentExtras.QUOTE_HISTORY_VALUES);
+            if (savedInstanceState.containsKey(QUOTE_HISTORY_VALUES)) {
+                quotes = savedInstanceState.getParcelableArrayList(QUOTE_HISTORY_VALUES);
                 processQuotes();
             }
         }
@@ -144,8 +144,10 @@ public class SymbolDetailFragment extends Fragment {
         float minValue = quotes.get(0).getClose();
         float maxValue = 0;
         for (QuoteHistoryResult quote : quotes) {
+            quotes.size();
             float close = quote.getClose();
-            dataset.addPoint(new Point(quote.getDate(), close));
+            String label = quote.getDate();
+            dataset.addPoint(new Point(label, close));
             if (close > maxValue) {
                 maxValue = close;
             }

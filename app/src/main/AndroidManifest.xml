@@ -2,15 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sam_chordas.android.stockhawk">
 
-        <uses-permission android:name="android.permission.INTERNET" />
-        <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-        <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-        <permission
-            android:name="com.google.android.gcm.demo.permission.C2D_MESSAGE"
-            android:protectionLevel="signature" />
+    <permission
+        android:name="com.google.android.gcm.demo.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
 
-        <uses-permission android:name="com.google.android.gcm.demo.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.gcm.demo.permission.C2D_MESSAGE" />
 
     <application
         android:allowBackup="true"
@@ -59,23 +59,34 @@
             android:name=".widget.QuoteWidgetRemoteViewsService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <activity
+            android:name=".ui.SymbolListActivity"
+            android:label="Temp"
+            android:parentActivityName=".ui.MyStocksActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sam_chordas.android.stockhawk.ui.MyStocksActivity" />
+        </activity>
+
         <activity
             android:name=".ui.SymbolDetailActivity"
             android:label="@string/symbol_detail"
-            android:parentActivityName=".ui.SymbolListActivity">
+            android:parentActivityName=".ui.MyStocksActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sam_chordas.android.stockhawk.ui.SymbolListActivity" />
+                android:value="com.sam_chordas.android.stockhawk.ui.MyStocksActivity" />
         </activity>
 
-
-<!--
-        <activity android:name=".widget.QuoteWidgetConfigureActivity">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
+        <activity
+            android:name=".ui.YahooSymbolDetailActivity"
+            android:label="@string/symbol_detail"
+            android:parentActivityName=".ui.MyStocksActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sam_chordas.android.stockhawk.ui.MyStocksActivity" />
         </activity>
--->
+
     </application>
 
 </manifest>

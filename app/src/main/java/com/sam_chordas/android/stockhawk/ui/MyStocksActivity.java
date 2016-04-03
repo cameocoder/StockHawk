@@ -39,6 +39,7 @@ import com.sam_chordas.android.stockhawk.rest.Utils;
 import com.sam_chordas.android.stockhawk.service.StockIntentService;
 import com.sam_chordas.android.stockhawk.service.StockTaskService;
 import com.sam_chordas.android.stockhawk.touch_helper.SimpleItemTouchHelperCallback;
+import com.sam_chordas.android.stockhawk.utils.IntentExtras;
 
 import java.util.Date;
 
@@ -100,7 +101,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                         cursor.moveToPosition(position);
                         String symbol = cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL));
                         final Bundle arguments = new Bundle();
-                        arguments.putString(SymbolDetailFragment.ARG_SYMBOL, symbol);
+                        arguments.putString(IntentExtras.ARG_SYMBOL, symbol);
                         Intent intent = new Intent(getApplicationContext(), SymbolDetailActivity.class);
                         intent.putExtras(arguments);
                         startActivity(intent);

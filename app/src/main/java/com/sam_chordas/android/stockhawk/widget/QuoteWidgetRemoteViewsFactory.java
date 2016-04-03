@@ -18,7 +18,7 @@ import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.rest.QuoteQueryResult;
 import com.sam_chordas.android.stockhawk.rest.Utils;
 import com.sam_chordas.android.stockhawk.ui.SymbolDetailActivity;
-import com.sam_chordas.android.stockhawk.ui.SymbolDetailFragment;
+import com.sam_chordas.android.stockhawk.utils.IntentExtras;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +78,7 @@ public class QuoteWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
         }
 
         final Bundle arguments = new Bundle();
-        arguments.putString(SymbolDetailFragment.ARG_SYMBOL, quote.getSymbol());
+        arguments.putString(IntentExtras.ARG_SYMBOL, quote.getSymbol());
         Intent intent = new Intent(context, SymbolDetailActivity.class);
         intent.putExtras(arguments);
 

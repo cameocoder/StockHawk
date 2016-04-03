@@ -13,11 +13,10 @@ import android.widget.Toast;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
 import com.sam_chordas.android.stockhawk.ui.SymbolDetailActivity;
-import com.sam_chordas.android.stockhawk.ui.SymbolDetailFragment;
+import com.sam_chordas.android.stockhawk.utils.IntentExtras;
 
 /**
  * Implementation of App Widget functionality.
- * App Widget Configuration implemented in {@link QuoteWidgetConfigureActivity QuoteWidgetConfigureActivity}
  */
 public class QuoteWidgetProvider extends AppWidgetProvider {
 
@@ -25,12 +24,8 @@ public class QuoteWidgetProvider extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-
-//        CharSequence widgetText = QuoteWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
-
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_collection);
-//        views.setTextViewText(R.id.appwidget_text, widgetText);
 
         // Create an Intent to launch MyStocksActivity
         Intent intent = new Intent(context, MyStocksActivity.class);
@@ -62,10 +57,7 @@ public class QuoteWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
-        // When the user deletes the widget, delete the preference associated with it.
-//        for (int appWidgetId : appWidgetIds) {
-//            QuoteWidgetConfigureActivity.deleteTitlePref(context, appWidgetId);
-//        }
+        // Enter relevant functionality for when the first widget is deleted
     }
 
     @Override
@@ -82,10 +74,10 @@ public class QuoteWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
 //        AppWidgetManager mgr = AppWidgetManager.getInstance(context);
         if (intent.getAction().equals(ACTION_DETAIL)) {
-            String symbol = intent.getStringExtra(SymbolDetailFragment.ARG_SYMBOL);
+            String symbol = intent.getStringExtra(IntentExtras.ARG_SYMBOL);
 
             final Bundle arguments = new Bundle();
-            arguments.putString(SymbolDetailFragment.ARG_SYMBOL, symbol);
+            arguments.putString(IntentExtras.ARG_SYMBOL, symbol);
             Intent detailIntent = new Intent(context, SymbolDetailActivity.class);
             detailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             detailIntent.putExtras(arguments);

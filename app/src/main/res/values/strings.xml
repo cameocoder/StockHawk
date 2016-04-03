@@ -18,4 +18,10 @@
     <string name="desc_add_symbol_fab">Add symbol</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
+    <string name="content_description_chart_view">Line chart for stock symbol</string>
+    <string name="time_period_1m">1m</string>
+    <string name="time_period_1d">1d</string>
+    <string name="time_period_5d">5d</string>
+    <string name="time_period_1y">1y</string>
+    <string name="time_period_max">max</string>
 </resources>

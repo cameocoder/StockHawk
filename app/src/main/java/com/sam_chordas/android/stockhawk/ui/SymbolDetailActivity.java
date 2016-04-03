@@ -2,12 +2,14 @@ package com.sam_chordas.android.stockhawk.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.sam_chordas.android.stockhawk.R;
+import com.sam_chordas.android.stockhawk.utils.IntentExtras;
 
 /**
  * An activity representing a single Symbol detail screen. This
@@ -41,9 +43,10 @@ public class SymbolDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(SymbolDetailFragment.ARG_SYMBOL,
-                    getIntent().getStringExtra(SymbolDetailFragment.ARG_SYMBOL));
-            SymbolDetailFragment fragment = new SymbolDetailFragment();
+            arguments.putString(IntentExtras.ARG_SYMBOL,
+                    getIntent().getStringExtra(IntentExtras.ARG_SYMBOL));
+//            Fragment fragment = new SymbolDetailFragment();
+            Fragment fragment = new YahooSymbolDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.symbol_detail_container, fragment)
