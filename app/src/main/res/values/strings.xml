@@ -17,8 +17,6 @@
     <string name="no_data_to_display">No data to display</string>
     <string name="symbol_detail">Symbol Detail</string>
     <string name="desc_add_symbol_fab">Add symbol</string>
-    <string name="configure">Configure</string>
-    <string name="add_widget">Add widget</string>
     <string name="content_description_chart_view">Line chart for stock symbol</string>
     <string name="time_period_1m">1m</string>
     <string name="time_period_1d">1d</string>

@@ -29,11 +29,9 @@ public class QuoteWidgetRemoteViewsFactory implements RemoteViewsService.RemoteV
 
     private final Context context;
     private List<QuoteQueryResult> stocks = new ArrayList<>();
-    private SharedPreferences prefs;
 
     public QuoteWidgetRemoteViewsFactory(Context context) {
         this.context = context;
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @Override

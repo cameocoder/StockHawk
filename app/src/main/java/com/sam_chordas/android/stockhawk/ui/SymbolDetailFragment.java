@@ -36,10 +36,7 @@ import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_HISTORY
 
 /**
  * A fragment representing a single Symbol detail screen.
- * This fragment is either contained in a {@link SymbolListActivity}
- * in two-pane mode (on tablets) or a {@link SymbolDetailActivity}
- * on handsets.
- * This fragment generates a chart by fetching historial data and generating a chart using
+ * This fragment generates a chart by fetching historical data and generating a chart using
  * LineChartView.  It is ugly.
  */
 public class SymbolDetailFragment extends Fragment {
@@ -147,6 +144,7 @@ public class SymbolDetailFragment extends Fragment {
             quotes.size();
             float close = quote.getClose();
             String label = quote.getDate();
+            // TODO Prune labels so they are not so crowded
             dataset.addPoint(new Point(label, close));
             if (close > maxValue) {
                 maxValue = close;

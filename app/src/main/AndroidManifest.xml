@@ -61,25 +61,7 @@
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <activity
-            android:name=".ui.SymbolListActivity"
-            android:label="Temp"
-            android:parentActivityName=".ui.MyStocksActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sam_chordas.android.stockhawk.ui.MyStocksActivity" />
-        </activity>
-
-        <activity
             android:name=".ui.SymbolDetailActivity"
-            android:label="@string/symbol_detail"
-            android:parentActivityName=".ui.MyStocksActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sam_chordas.android.stockhawk.ui.MyStocksActivity" />
-        </activity>
-
-        <activity
-            android:name=".ui.YahooSymbolDetailActivity"
             android:label="@string/symbol_detail"
             android:parentActivityName=".ui.MyStocksActivity">
             <meta-data

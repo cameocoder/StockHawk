@@ -65,7 +65,7 @@ public class SymbolDetailActivity extends AppCompatActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            NavUtils.navigateUpTo(this, new Intent(this, SymbolListActivity.class));
+            NavUtils.navigateUpTo(this, new Intent(this, MyStocksActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
