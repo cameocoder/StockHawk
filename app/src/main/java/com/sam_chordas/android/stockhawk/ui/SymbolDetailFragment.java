@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -31,8 +32,8 @@ import static com.sam_chordas.android.stockhawk.service.StockTaskService.SYMBOL;
 import static com.sam_chordas.android.stockhawk.service.StockTaskService.TAG;
 import static com.sam_chordas.android.stockhawk.utils.IntentExtras.ARG_SYMBOL;
 import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_HISTORY_INTENT;
-import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_RESULT;
 import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_HISTORY_VALUES;
+import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_RESULT;
 
 /**
  * A fragment representing a single Symbol detail screen.
@@ -133,8 +134,8 @@ public class SymbolDetailFragment extends Fragment {
 
     private void processQuotes() {
         LineSet dataset = new LineSet();
-        int line = getResources().getColor(R.color.chart_line);
-        int fill = getResources().getColor(R.color.chart_fill);
+        int line = ContextCompat.getColor(getContext(), R.color.chart_line);
+        int fill = ContextCompat.getColor(getContext(), R.color.chart_fill);
         dataset.setColor(line);
         dataset.setFill(fill);
 

@@ -31,7 +31,7 @@ public class YahooSymbolDetailFragment extends Fragment {
     private static final String CHART_ARG_TIME_WEEK = "5d";
     private static final String CHART_ARG_TIME_MONTH = "1m";
     private static final String CHART_ARG_TIME_YEAR = "1y";
-    private static final String CHART_ARG_TIME_MAX = "max";
+    private static final String CHART_ARG_TIME_MAX = "my";
 
     @Bind(R.id.chartView)
     ImageView lineChart;
