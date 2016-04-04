@@ -21,18 +21,10 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 import static com.sam_chordas.android.stockhawk.rest.Utils.notifyAppWidgetViewDataChanged;
 
@@ -96,8 +88,8 @@ public class StockTaskService extends GcmTaskService {
 
         String stockInput = params.getExtras().getString(SYMBOL);
 
-        String startDate = getStartDate();
-        String endDate = getEndDate();
+        String startDate = Utils.getStartDate();
+        String endDate = Utils.getEndDate();
 
         String query = String.format(YQL_HISTORY_QUERY, stockInput, startDate, endDate);
         try {
@@ -117,61 +109,13 @@ public class StockTaskService extends GcmTaskService {
             Log.d(LOG_TAG, "Query: " + urlString);
             getResponse = fetchData(urlString);
             Log.d(LOG_TAG, "Response: " + getResponse);
-            quotes = processHistoryResponse(getResponse);
+            quotes = Utils.processHistoryResponse(getResponse);
             result = GcmNetworkManager.RESULT_SUCCESS;
         } catch (IOException e) {
             e.printStackTrace();
         }
         broadcastHistoryResponse(quotes, result);
         return result;
-    }
-
-    private ArrayList<QuoteHistoryResult> processHistoryResponse(String response) {
-        ArrayList<QuoteHistoryResult> quotes = new ArrayList<>();
-
-        try {
-            JSONObject jsonObject = new JSONObject(response);
-            if (jsonObject.length() != 0) {
-                jsonObject = jsonObject.getJSONObject("query");
-                int count = Integer.parseInt(jsonObject.getString("count"));
-                if (count > 0) {
-                    JSONArray resultsArray = jsonObject.getJSONObject("results").getJSONArray("quote");
-                    if (resultsArray != null && resultsArray.length() != 0) {
-                        for (int i = 0; i < resultsArray.length(); i++) {
-                            jsonObject = resultsArray.getJSONObject(i);
-                            String date = jsonObject.getString("Date");
-                            float open = Float.parseFloat(Utils.truncateBidPrice(jsonObject.getString("Open")));
-                            float close = Float.parseFloat(Utils.truncateBidPrice(jsonObject.getString("Close")));
-                            QuoteHistoryResult quote = new QuoteHistoryResult();
-                            quote.setDate(date);
-                            quote.setOpen(open);
-                            quote.setClose(close);
-                            quotes.add(quote);
-                        }
-                    }
-                }
-            }
-
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "String to JSON failed: " + e);
-        }
-
-        return quotes;
-    }
-
-    private String getEndDate() {
-        Calendar c = Calendar.getInstance();
-        Date date = c.getTime();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        return format.format(date);
-    }
-
-    private String getStartDate() {
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.MONTH, -1);
-        Date date = c.getTime();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        return format.format(date);
     }
 
     private int handleQuoteQuery(TaskParams params) {
@@ -247,12 +191,19 @@ public class StockTaskService extends GcmTaskService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        broadcastQueryResponse(result);
         return result;
+    }
+
+    private void broadcastQueryResponse(int result) {
+        Intent intent = new Intent(IntentExtras.QUOTE_QUERY_INTENT);
+        intent.putExtra(IntentExtras.QUOTE_RESULT, result);
+        context.sendBroadcast(intent);
     }
 
     private void broadcastHistoryResponse(ArrayList<QuoteHistoryResult> quotes, int result) {
         Intent intent = new Intent(IntentExtras.QUOTE_HISTORY_INTENT);
-        intent.putExtra(IntentExtras.QUOTE_HISTORY_RESULT, result);
+        intent.putExtra(IntentExtras.QUOTE_RESULT, result);
         if (result == GcmNetworkManager.RESULT_SUCCESS) {
             intent.putParcelableArrayListExtra(IntentExtras.QUOTE_HISTORY_VALUES, quotes);
         }

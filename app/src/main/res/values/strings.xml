@@ -9,8 +9,9 @@
     <string name="input_prefill" />
     <string name="widget_title">Today\'s Market</string>
     <string name="appwidget_text" translatable="false">@string/app_name</string>
-    <string name="network_toast">Uh-oh! This app requires an internet connection</string>
-    <string name="stock_already_saved_toast">This stock is already saved!</string>
+    <string name="network_toast">Unable to connect to network</string>
+    <string name="stock_already_saved_toast">Stock already exists</string>
+    <string name="fetch_failure">Failed to retrieve stock data</string>
     <string name="last_updated">Last Updated: %s</string>
 
     <string name="no_data_to_display">No data to display</string>

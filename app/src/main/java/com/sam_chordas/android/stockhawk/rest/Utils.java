@@ -16,7 +16,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by sam_chordas on 10/8/15.
@@ -47,14 +51,20 @@ public class Utils {
                 if (count == 1) {
                     jsonObject = jsonObject.getJSONObject(JSON_RESULTS)
                             .getJSONObject(JSON_QUOTE);
-                    batchOperations.add(buildBatchOperation(jsonObject));
+                    ContentProviderOperation contentProviderOperation = buildBatchOperation(jsonObject);
+                    if (contentProviderOperation != null) {
+                        batchOperations.add(contentProviderOperation);
+                    }
                 } else {
                     resultsArray = jsonObject.getJSONObject(JSON_RESULTS).getJSONArray(JSON_QUOTE);
 
                     if (resultsArray != null && resultsArray.length() != 0) {
                         for (int i = 0; i < resultsArray.length(); i++) {
                             jsonObject = resultsArray.getJSONObject(i);
-                            batchOperations.add(buildBatchOperation(jsonObject));
+                            ContentProviderOperation contentProviderOperation = buildBatchOperation(jsonObject);
+                            if (contentProviderOperation != null) {
+                                batchOperations.add(contentProviderOperation);
+                            }
                         }
                     }
                 }
@@ -97,10 +107,17 @@ public class Utils {
                 QuoteProvider.Quotes.CONTENT_URI);
         try {
             String change = jsonObject.getString("Change");
-            builder.withValue(QuoteColumns.SYMBOL, jsonObject.getString("symbol"));
-            builder.withValue(QuoteColumns.BIDPRICE, truncateBidPrice(jsonObject.getString("Bid")));
+            String symbol = jsonObject.getString("symbol");
+            String bid = jsonObject.getString("Bid");
+            String changePercent = jsonObject.getString("ChangeinPercent");
+            // Invalid stock symbols have data set to the string "null"
+            if (JSON_NULL.equals(bid) || JSON_NULL.equals(change)) {
+                return null;
+            }
+            builder.withValue(QuoteColumns.SYMBOL, symbol);
+            builder.withValue(QuoteColumns.BIDPRICE, truncateBidPrice(bid));
             builder.withValue(QuoteColumns.PERCENT_CHANGE, truncateChange(
-                    jsonObject.getString("ChangeinPercent"), true));
+                    changePercent, true));
             builder.withValue(QuoteColumns.CHANGE, truncateChange(change, false));
             builder.withValue(QuoteColumns.ISCURRENT, 1);
             if (change.charAt(0) == '-') {
@@ -120,5 +137,53 @@ public class Utils {
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
                 new ComponentName(context, QuoteWidgetProvider.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
+    }
+
+    public static String getStartDate() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MONTH, -1);
+        Date date = c.getTime();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        return format.format(date);
+    }
+
+    public static String getEndDate() {
+        Calendar c = Calendar.getInstance();
+        Date date = c.getTime();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        return format.format(date);
+    }
+
+    public static ArrayList<QuoteHistoryResult> processHistoryResponse(String response) {
+        ArrayList<QuoteHistoryResult> quotes = new ArrayList<>();
+
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            if (jsonObject.length() != 0) {
+                jsonObject = jsonObject.getJSONObject(JSON_QUERY);
+                int count = Integer.parseInt(jsonObject.getString(JSON_COUNT));
+                if (count > 0) {
+                    JSONArray resultsArray = jsonObject.getJSONObject(JSON_RESULTS).getJSONArray(JSON_QUOTE);
+                    if (resultsArray != null && resultsArray.length() != 0) {
+                        for (int i = 0; i < resultsArray.length(); i++) {
+                            jsonObject = resultsArray.getJSONObject(i);
+                            String date = jsonObject.getString("Date");
+                            float open = Float.parseFloat(truncateBidPrice(jsonObject.getString("Open")));
+                            float close = Float.parseFloat(truncateBidPrice(jsonObject.getString("Close")));
+                            QuoteHistoryResult quote = new QuoteHistoryResult();
+                            quote.setDate(date);
+                            quote.setOpen(open);
+                            quote.setClose(close);
+                            quotes.add(quote);
+                        }
+                    }
+                }
+            }
+
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "String to JSON failed: " + e);
+        }
+
+        return quotes;
     }
 }

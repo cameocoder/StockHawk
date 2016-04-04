@@ -31,7 +31,7 @@ import static com.sam_chordas.android.stockhawk.service.StockTaskService.SYMBOL;
 import static com.sam_chordas.android.stockhawk.service.StockTaskService.TAG;
 import static com.sam_chordas.android.stockhawk.utils.IntentExtras.ARG_SYMBOL;
 import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_HISTORY_INTENT;
-import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_HISTORY_RESULT;
+import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_RESULT;
 import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_HISTORY_VALUES;
 
 /**
@@ -55,7 +55,7 @@ public class SymbolDetailFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equalsIgnoreCase(QUOTE_HISTORY_INTENT)) {
-                int resultCode = intent.getExtras().getInt(QUOTE_HISTORY_RESULT);
+                int resultCode = intent.getExtras().getInt(QUOTE_RESULT);
                 if (resultCode == GcmNetworkManager.RESULT_SUCCESS) {
                     quotes = intent.getExtras().getParcelableArrayList(QUOTE_HISTORY_VALUES);
                     processQuotes();

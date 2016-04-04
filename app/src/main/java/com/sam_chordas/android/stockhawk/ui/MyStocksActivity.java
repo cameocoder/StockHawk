@@ -1,9 +1,11 @@
 package com.sam_chordas.android.stockhawk.ui;
 
 import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -50,16 +52,12 @@ import static com.sam_chordas.android.stockhawk.service.StockTaskService.ADD;
 import static com.sam_chordas.android.stockhawk.service.StockTaskService.INIT;
 import static com.sam_chordas.android.stockhawk.service.StockTaskService.PERIODIC;
 import static com.sam_chordas.android.stockhawk.service.StockTaskService.SYMBOL;
+import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_QUERY_INTENT;
+import static com.sam_chordas.android.stockhawk.utils.IntentExtras.QUOTE_RESULT;
 
 public class MyStocksActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
-    private Intent mServiceIntent;
     private static final int CURSOR_LOADER_ID = 0;
-    private QuoteCursorAdapter mCursorAdapter;
 
     @Bind(R.id.stock_list)
     RecyclerView stockList;
@@ -69,6 +67,24 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     TextView lastUpdated;
     @Bind(R.id.fab)
     FloatingActionButton fab;
+    /**
+     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
+     */
+    private CharSequence mTitle;
+    private Intent mServiceIntent;
+    private QuoteCursorAdapter mCursorAdapter;
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equalsIgnoreCase(QUOTE_QUERY_INTENT)) {
+                int resultCode = intent.getExtras().getInt(QUOTE_RESULT);
+                if (resultCode == GcmNetworkManager.RESULT_FAILURE) {
+                    Toast.makeText(context, getString(R.string.fetch_failure), Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +92,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         setContentView(R.layout.activity_my_stocks);
         ButterKnife.bind(this);
 
+        registerReceiver(broadcastReceiver, new IntentFilter(QUOTE_QUERY_INTENT));
         // The intent service is for executing immediate pulls from the Yahoo API
         // GCMTaskService can only schedule tasks, they cannot execute immediately
         mServiceIntent = new Intent(this, StockIntentService.class);
@@ -163,8 +180,14 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
+
     public void networkToast() {
-        Toast.makeText(this, getString(R.string.network_toast), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.network_toast), Toast.LENGTH_LONG).show();
     }
 
     public void restoreActionBar() {
@@ -300,6 +323,5 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
-
 
 }

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
@@ -82,7 +81,7 @@ public class QuoteWidgetProvider extends AppWidgetProvider {
             detailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             detailIntent.putExtras(arguments);
             context.startActivity(detailIntent);
-            Toast.makeText(context, "onReceive " + ACTION_DETAIL, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "onReceive " + ACTION_DETAIL, Toast.LENGTH_SHORT).show();
         }
         super.onReceive(context, intent);
     }
