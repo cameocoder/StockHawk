@@ -12,10 +12,7 @@ import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.utils.IntentExtras;
 
 /**
- * An activity representing a single Symbol detail screen. This
- * activity is only used narrow width devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
- * in a {@link SymbolListActivity}.
+ * An activity representing a single Symbol detail screen.
  */
 public class SymbolDetailActivity extends AppCompatActivity {
 

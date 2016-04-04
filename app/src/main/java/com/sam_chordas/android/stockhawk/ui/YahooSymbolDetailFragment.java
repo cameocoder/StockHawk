@@ -21,9 +21,6 @@ import static com.sam_chordas.android.stockhawk.utils.IntentExtras.ARG_SYMBOL;
 
 /**
  * A fragment representing a single Symbol detail screen.
- * This fragment is either contained in a {@link SymbolListActivity}
- * in two-pane mode (on tablets) or a {@link SymbolDetailActivity}
- * on handsets.
  * Get the chart data from yahoo chart api.
  */
 public class YahooSymbolDetailFragment extends Fragment {
